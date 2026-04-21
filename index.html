@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EcoRatio - Carbon Offset Transparency Dashboard</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@400;700&display=swap');
+
+    /* Reset and base */
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: #FFFFFF;
+      color: #000000;
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    main {
+      max-width: 720px;
+      margin: 4rem auto;
+      padding: 0 1rem;
+      text-align: center;
+    }
+
+    h1 {
+      font-family: 'Bebas Neue', cursive;
+      font-weight: 400;
+      font-size: 3.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      margin-bottom: 1.2rem;
+      line-height: 1.1;
+    }
+
+    p.lead {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin-bottom: 3rem;
+      color: #333333;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      line-height: 1.4;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      align-items: center;
+      max-width: 420px;
+      margin: 0 auto;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      padding: 0.85rem 1rem;
+      font-size: 1.1rem;
+      border: 2px solid #000000;
+      border-radius: 0;
+      font-weight: 700;
+      font-family: 'Roboto', sans-serif;
+      transition: border-color 0.3s ease;
+    }
+
+    input[type="email"]:focus {
+      border-color: #E63946;
+      outline: none;
+    }
+
+    button {
+      background-color: #E63946;
+      color: #FFFFFF;
+      border: none;
+      padding: 0.95rem 1.4rem;
+      font-size: 1.25rem;
+      font-family: 'Bebas Neue', cursive;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      border-radius: 0;
+      width: 100%;
+      transition: background-color 0.3s ease;
+    }
+
+    button:hover,
+    button:focus {
+      background-color: #b8323b;
+      outline: none;
+    }
+
+    .thanks-message {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #3a3a3a;
+      margin-top: 1.25rem;
+    }
+    
+    footer {
+      margin-top: 6rem;
+      font-size: 0.875rem;
+      color: #777777;
+      text-align: center;
+    }
+
+    a.link {
+      color: #E63946;
+      text-decoration: none;
+      border-bottom: 1px solid #E63946;
+      font-weight: 700;
+    }
+
+    a.link:hover {
+      color: #b8323b;
+      border-color: #b8323b;
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>EcoRatio</h1>
+    <p class="lead">Transparent comparison of carbon offsets. Measure impact with precision.</p>
+
+    <form id="waitlist-form">
+      <input type="email" name="email" placeholder="Enter your email" required />
+      <button type="submit">Join the Waitlist</button>
+      <p class="thanks-message" id="thanks-message" style="display:none;"></p>
+    </form>
+  </main>
+  <footer>
+    &copy; 2026 EcoRatio. All rights reserved.
+  </footer>
+  <script>
+    const form = document.getElementById('waitlist-form');
+    const thanksMessage = document.getElementById('thanks-message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      thanksMessage.style.display = 'none';
+
+      const email = form.email.value.trim();
+      if (!email) return;
+
+      const data = { data: { email } };
+
+      try {
+        const response = await fetch('https://app.baget.ai/api/public/databases/5c7b35c0-debd-45d4-bceb-338420bd8297/rows', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(data)
+        });
+
+        if (response.ok) {
+          thanksMessage.textContent = "Thanks — we'll be in touch.";
+          thanksMessage.style.color = '#007a33';
+          thanksMessage.style.display = 'block';
+          form.reset();
+        } else {
+          const errData = await response.json();
+          thanksMessage.textContent = errData.message || 'Failed to submit. Please try again.';
+          thanksMessage.style.color = '#b8323b';
+          thanksMessage.style.display = 'block';
+        }
+      } catch (error) {
+        thanksMessage.textContent = 'Network error. Please try again.';
+        thanksMessage.style.color = '#b8323b';
+        thanksMessage.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
